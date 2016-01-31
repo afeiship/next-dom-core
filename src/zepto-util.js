@@ -69,6 +69,9 @@
       isObject: function (obj) {
         return DOMUtil.type(obj) == 'object';
       },
+      isString: function (obj) {
+        return typeof(obj) == 'string';
+      },
       isWindow: function (obj) {
         return obj != null && obj == obj.global;
       },
