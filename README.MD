@@ -9,3 +9,6 @@
 + nx.qsa
 + nx.matches
 + nx.fragment
+
+##issue:
++ https://github.com/madrobby/zepto/issues/730
