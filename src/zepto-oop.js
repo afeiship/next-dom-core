@@ -28,7 +28,7 @@
           }
         }
         // If a function is given, call it when the DOM is ready
-        else if (isFunction(selector)) return nx.$(document).ready(selector);
+        else if (DOMUtil.isFunction(selector)) return nx.$(document).ready(selector);
         // If a Zepto collection is given, just return it
         else if (Zepto.isZ(selector)) return selector;
         else {

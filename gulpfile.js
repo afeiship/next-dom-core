@@ -25,7 +25,7 @@
         conf.src + '/zepto-static.js',
         conf.src + '/zepto-proto.js'
       ])
-      .pipe(concat('dom-core.js'))
+      .pipe(concat('next-dom-core.js'))
       .pipe(uglify())
       //.pipe(rename({
       //  extname: '.min.js'
