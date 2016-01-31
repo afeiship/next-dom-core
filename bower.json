@@ -1,0 +1,29 @@
+{
+  "name": "next-dom-core",
+  "homepage": "https://github.com/afeiship/next-dom-core",
+  "authors": [
+    "afei"
+  ],
+  "description": "A copy of zepto-dom-core based on next toolkit.",
+  "main": "dist/dom-core.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "dom",
+    "zepto",
+    "next",
+    "toolkit"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "next-js-core": "*"
+  }
+}
