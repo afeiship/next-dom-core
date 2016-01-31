@@ -35,7 +35,7 @@
           // normalize array if an array of nodes is given
           if (DOMUtil.isArray(selector)) dom = DOMUtil.compact(selector);
           // Wrap DOM nodes.
-          else if (isObject(selector))
+          else if (DOMUtil.isObject(selector))
             dom = [selector], selector = null;
           // If it's a html fragment, create nodes from it
           else if (fragmentRE.test(selector))
