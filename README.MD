@@ -5,6 +5,7 @@
 
 ##usage:
 + Most of method:$ -> nx.$
-+ nx.reayy
++ nx.ready
 + nx.qsa
 + nx.matches
++ nx.fragment
