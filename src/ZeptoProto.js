@@ -145,7 +145,7 @@
         var ancestors = [], nodes = this;
         while (nodes.length > 0)
           nodes = $.map(nodes, function (node) {
-            if ((node = node.parentNode) && !isDocument(node) && ancestors.indexOf(node) < 0) {
+            if ((node = node.parentNode) && !nx.isDocument(node) && ancestors.indexOf(node) < 0) {
               ancestors.push(node);
               return node;
             }
