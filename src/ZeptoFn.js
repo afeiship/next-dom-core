@@ -6,7 +6,8 @@
   var classList;
   var emptyArray = [],
     slice = emptyArray.slice,
-    filter = emptyArray.filter;
+    filter = emptyArray.filter,
+    map = emptyArray.map;
   var capitalRE = /([A-Z])/g;
   var rootNodeRE = /^(?:body|html)$/i;
   var propMap = {
@@ -24,8 +25,82 @@
     'contenteditable': 'contentEditable'
   };
   var adjacencyOperators = ['after', 'prepend', 'before', 'append'];
+  var elementDisplay = {}, classCache = {};
+  var cssNumber = {
+    'column-count': 1,
+    'columns': 1,
+    'font-weight': 1,
+    'line-height': 1,
+    'opacity': 1,
+    'z-index': 1,
+    'zoom': 1
+  };
 
-  var ZeptoProto = nx.declare('nx.zepto.Proto', {
+
+  function setAttribute(node, name, value) {
+    value == null ? node.removeAttribute(name) : node.setAttribute(name, value);
+  }
+
+  function className(node, value) {
+    var klass = node.className || '',
+      svg = klass && klass.baseVal !== undefined;
+
+    if (value === undefined) return svg ? klass.baseVal : klass;
+    svg ? (klass.baseVal = value) : (node.className = value)
+  }
+
+  function classRE(name) {
+    if (!name in classCache) {
+      classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)');
+    }
+    return classCache[name];
+  }
+
+  function maybeAddPx(name, value) {
+    return (typeof value == 'number' && !cssNumber[nx.dasherize(name)]) ? value + 'px' : value
+  }
+
+  function defaultDisplay(nodeName) {
+    var element, display;
+    if (!elementDisplay[nodeName]) {
+      element = document.createElement(nodeName);
+      document.body.appendChild(element);
+      display = getComputedStyle(element, '').getPropertyValue("display");
+      element.parentNode.removeChild(element);
+      display == "none" && (display = "block");
+      elementDisplay[nodeName] = display;
+    }
+    return elementDisplay[nodeName];
+  }
+
+  function children(element) {
+    if ('children' in element) {
+      return slice.call(element.children);
+    } else {
+      var nodes = element.childNodes;
+      return map.call(nodes, function (node) {
+        if (node.nodeType == 1) return node;
+      });
+    }
+  }
+
+  function filtered(nodes, selector) {
+    return selector == null ? $(nodes) : $(nodes).filter(selector)
+  }
+
+  function funcArg(context, arg, idx, payload) {
+    return nx.isFunction(arg) ? arg.call(context, idx, payload) : arg;
+  }
+
+  function traverseNode(node, fun) {
+    fun(node);
+    for (var i = 0, len = node.childNodes.length; i < len; i++) {
+      traverseNode(node.childNodes[i], fun);
+    }
+  }
+
+
+  var ZeptoFn = nx.declare('nx.zepto.Fn', {
     statics: {
       forEach: emptyArray.forEach,
       reduce: emptyArray.reduce,
@@ -144,20 +219,20 @@
       parents: function (selector) {
         var ancestors = [], nodes = this;
         while (nodes.length > 0)
-          nodes = $.map(nodes, function (node) {
+          nodes = nx.map(nodes, function (node) {
             if ((node = node.parentNode) && !nx.isDocument(node) && ancestors.indexOf(node) < 0) {
               ancestors.push(node);
               return node;
             }
           });
-        return $.filtered(ancestors, selector)
+        return filtered(ancestors, selector)
       },
       parent: function (selector) {
-        return $.filtered(uniq(this.pluck('parentNode')), selector)
+        return filtered(nx.uniq(this.pluck('parentNode')), selector)
       },
       children: function (selector) {
-        return $.filtered(this.map(function () {
-          return $.children(this)
+        return filtered(this.map(function () {
+          return children(this)
         }), selector)
       },
       contents: function () {
@@ -166,8 +241,8 @@
         })
       },
       siblings: function (selector) {
-        return $.filtered(this.map(function (i, el) {
-          return filter.call($.children(el.parentNode), function (child) {
+        return filtered(this.map(function (i, el) {
+          return filter.call(children(el.parentNode), function (child) {
             return child !== el
           })
         }), selector);
@@ -179,7 +254,7 @@
       },
       // `pluck` is borrowed from Prototype.js
       pluck: function (property) {
-        return $.map(this, function (el) {
+        return nx.map(this, function (el) {
           return el[property]
         });
       },
@@ -187,7 +262,7 @@
         return this.each(function () {
           this.style.display == 'none' && (this.style.display = '');
           if (getComputedStyle(this, '').getPropertyValue('display') == 'none')
-            this.style.display = $.defaultDisplay(this.nodeName)
+            this.style.display = defaultDisplay(this.nodeName)
         })
       },
       replaceWith: function (newContent) {
@@ -254,14 +329,14 @@
         return 0 in arguments ?
           this.each(function (idx) {
             var originHtml = this.innerHTML;
-            $(this).empty().append($.funcArg(this, html, idx, originHtml))
+            $(this).empty().append(funcArg(this, html, idx, originHtml))
           }) :
           (0 in this ? this[0].innerHTML : null);
       },
       text: function (text) {
         return 0 in arguments ?
           this.each(function (idx) {
-            var newText = $.funcArg(this, text, idx, this.textContent);
+            var newText = funcArg(this, text, idx, this.textContent);
             this.textContent = newText == null ? '' : '' + newText
           }) :
           (0 in this ? this[0].textContent : null)
@@ -274,14 +349,14 @@
           ) :
           this.each(function (idx) {
             if (this.nodeType !== 1) return;
-            if (nx.isObject(name)) for (key in name) $.setAttribute(this, key, name[key]);
-            else $.setAttribute(this, name, $.funcArg(this, value, idx, this.getAttribute(name)));
+            if (nx.isObject(name)) for (key in name) setAttribute(this, key, name[key]);
+            else setAttribute(this, name, funcArg(this, value, idx, this.getAttribute(name)));
           })
       },
       removeAttr: function (name) {
         return this.each(function () {
           this.nodeType === 1 && name.split(' ').forEach(function (attribute) {
-            $.setAttribute(this, attribute)
+            setAttribute(this, attribute)
           }, this)
         })
       },
@@ -289,7 +364,7 @@
         name = propMap[name] || name;
         return (1 in arguments) ?
           this.each(function (idx) {
-            this[name] = $.funcArg(this, value, idx, this[name])
+            this[name] = funcArg(this, value, idx, this[name])
           }) :
           (this[0] && this[0][name]);
       },
@@ -305,7 +380,7 @@
       val: function (value) {
         return 0 in arguments ?
           this.each(function (idx) {
-            this.value = $.funcArg(this, value, idx, this.value)
+            this.value = funcArg(this, value, idx, this.value)
           }) :
           (this[0] && (this[0].multiple ?
               $(this[0]).find('option').filter(function () {
@@ -317,7 +392,7 @@
       offset: function (coordinates) {
         if (coordinates) return this.each(function (index) {
           var $this = $(this),
-            coords = $.funcArg(this, coordinates, index, $this.offset()),
+            coords = funcArg(this, coordinates, index, $this.offset()),
             parentOffset = $this.offsetParent().offset(),
             props = {
               top: coords.top - parentOffset.top,
@@ -359,7 +434,7 @@
               this.style.removeProperty(nx.dasherize(property))
             });
           else
-            css = nx.dasherize(property) + ':' + $.maybeAddPx(property, value)
+            css = nx.dasherize(property) + ':' + maybeAddPx(property, value)
         } else {
           for (key in property)
             if (!property[key] && property[key] !== 0)
@@ -367,7 +442,7 @@
                 this.style.removeProperty(nx.dasherize(key))
               });
             else
-              css += nx.dasherize(key) + ':' + $.maybeAddPx(key, property[key]) + ';';
+              css += nx.dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
         }
 
         return this.each(function () {
@@ -380,36 +455,36 @@
       hasClass: function (name) {
         if (!name) return false;
         return emptyArray.some.call(this, function (el) {
-          return this.test($.className(el))
-        }, $.classRE(name))
+          return this.test(className(el))
+        }, classRE(name))
       },
       addClass: function (name) {
         if (!name) return this;
         return this.each(function (idx) {
           if (!('className' in this)) return;
           classList = [];
-          var cls = $.className(this), newName = $.funcArg(this, name, idx, cls);
+          var cls = className(this), newName = funcArg(this, name, idx, cls);
           newName.split(/\s+/g).forEach(function (klass) {
             if (!$(this).hasClass(klass)) classList.push(klass)
           }, this);
-          classList.length && $.className(this, cls + (cls ? ' ' : '') + classList.join(' '))
+          classList.length && className(this, cls + (cls ? ' ' : '') + classList.join(' '))
         })
       },
       removeClass: function (name) {
         return this.each(function (idx) {
           if (!('className' in this)) return;
-          if (name === undefined) return $.className(this, '');
-          classList = $.className(this);
-          $.funcArg(this, name, idx, classList).split(/\s+/g).forEach(function (klass) {
-            classList = classList.replace($.classRE(klass), ' ')
+          if (name === undefined) return className(this, '');
+          classList = className(this);
+          funcArg(this, name, idx, classList).split(/\s+/g).forEach(function (klass) {
+            classList = classList.replace(classRE(klass), ' ')
           });
-          $.className(this, classList.trim())
+          className(this, classList.trim())
         })
       },
       toggleClass: function (name, when) {
         if (!name) return this;
         return this.each(function (idx) {
-          var $this = $(this), names = $.funcArg(this, name, idx, $.className(this));
+          var $this = $(this), names = funcArg(this, name, idx, className(this));
           names.split(/\s+/g).forEach(function (klass) {
             (when === undefined ? !$this.hasClass(klass) : when) ?
               $this.addClass(klass) : $this.removeClass(klass)
@@ -505,7 +580,7 @@
             operatorIndex == 2 ? target :
               null;
 
-        var parentInDocument = $.contains(document.documentElement, parent);
+        var parentInDocument = nx.contains(document.documentElement, parent);
 
         nodes.forEach(function (node) {
           if (copyByClone) {
@@ -516,7 +591,7 @@
 
           parent.insertBefore(node, target);
           if (parentInDocument) {
-            $.traverseNode(node, function (el) {
+            traverseNode(node, function (el) {
               if (
                 el.nodeName != null
                 && el.nodeName.toUpperCase() === 'SCRIPT'
@@ -543,7 +618,7 @@
 
   nx.mix(
     $.fn,
-    ZeptoProto.__statics__
+    ZeptoFn.__statics__
   );
 
 

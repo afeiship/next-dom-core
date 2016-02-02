@@ -16,8 +16,7 @@
     src:[
       conf.src + '/Base.js',
       conf.src + '/Core.js',
-      conf.src + '/ZeptoStatic.js',
-      conf.src + '/ZeptoProto.js'
+      conf.src + '/ZeptoFn.js'
     ],
     dist: 'nx.dom.core.js',
     mini: 'nx.dom.core.min.js'

@@ -19,6 +19,7 @@
     };
   var methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'];
   var emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter;
+  var supportContains = !!document.documentElement.contains;
 
 
   nx.ready = function (callback) {
@@ -116,6 +117,21 @@
     }
     return nx.toArray(result);
   };
+
+
+  nx.contains = (function () {
+    if (supportContains) {
+      return function (parent, node) {
+        return parent !== node && parent.contains(node)
+      };
+    } else {
+      return function (parent, node) {
+        while (node && (node = node.parentNode))
+          if (node === parent) return true;
+        return false;
+      }
+    }
+  }());
 
 
 }(nx, nx.GLOBAL));
