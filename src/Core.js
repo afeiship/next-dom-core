@@ -68,12 +68,4 @@
   nx.$.fn = {};
 
 
-
-  nx.mix(nx.$,{
-
-  })
-
-
-
-
 }(nx, nx.GLOBAL));
