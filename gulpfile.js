@@ -5,9 +5,22 @@
   var concat = require('gulp-concat');
   var rename = require('gulp-rename');
   var uglify = require('gulp-uglify');
+  var gulpFilter=require('gulp-filter');
+  var filter = gulpFilter(['*'], {restore: true});
   var conf = {
     src: 'src',
     dist: 'dist'
+  };
+
+  var files={
+    src:[
+      conf.src + '/Base.js',
+      conf.src + '/Core.js',
+      conf.src + '/ZeptoStatic.js',
+      conf.src + '/ZeptoProto.js'
+    ],
+    dist: 'nx.dom.core.js',
+    mini: 'nx.dom.core.min.js'
   };
 
   gulp.task('clean', function () {
@@ -15,17 +28,14 @@
   });
 
   gulp.task('uglify', ['clean'], function () {
-    gulp.src([
-        conf.src + '/Base.js',
-        conf.src + '/Core.js',
-        conf.src + '/ZeptoStatic.js',
-        conf.src + '/ZeptoProto.js'
-      ])
-      .pipe(concat('nx.dom.core.js'))
+    return gulp.src(files.src)
+      .pipe(concat(files.dist))
+      .pipe(filter)
+      .pipe(gulp.dest('dist'))
       .pipe(uglify())
-      //.pipe(rename({
-      //  extname: '.min.js'
-      //}))
+      .pipe(rename({
+        extname: '.min.js'
+      }))
       .pipe(gulp.dest('dist'));
   });
 

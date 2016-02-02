@@ -1,1 +1,852 @@
-!function(t,e){var n,i=e.document,r=/complete|loaded|interactive/,s=/^<(\w+)\s*\/?>(?:<\/\1>|)$/,o=/<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,a=/^\s*<(\w+|!)[^>]*>/,c=/^[\w-]*$/,u=i.createElement("table"),l=i.createElement("tr"),h={tr:i.createElement("tbody"),tbody:u,thead:u,tfoot:u,td:l,th:l,"*":i.createElement("div")},f=["val","css","html","text","data","width","height","offset"],d=[],p=d.slice;d.filter;t.ready=function(e){return r.test(i.readyState)&&i.body?e(t):i.addEventListener("DOMContentLoaded",function(){e(t)},!1),this},t.matches=function(t,e){if(!e||!t||1!==t.nodeType)return!1;var n=t.matches||t.webkitMatchesSelector||t.mozMatchesSelector||t.oMatchesSelector||t.matchesSelector;if(n)return n.call(t,e);for(var i=(t.document||t.ownerDocument).querySelectorAll(e),r=i.length;--r>=0&&i.item(r)!==t;);return r>-1},t.fragment=function(e,r,c){var u,l,d;return s.test(e)&&(u=t.$(i.createElement(RegExp.$1))),u||(e.replace&&(e=e.replace(o,"<$1></$2>")),r===n&&(r=a.test(e)&&RegExp.$1),r in h||(r="*"),d=h[r],d.innerHTML=""+e,u=t.each(p.call(d.childNodes),function(){d.removeChild(this)})),t.isPlainObject(c)&&(l=t.$(u),t.each(c,function(t,e){f.indexOf(t)>-1?l[t](e):l.attr(t,e)})),u},t.qsa=function(e,n){var i,r="#"===n[0],s=!r&&"."==n[0],o=r||s?n.slice(1):n,a=c.test(o);return t.isDocument(e)&&a&&r?i=e.getElementById(o):(1==e.nodeType||9==e.nodeType)&&(i=a&&!r?s?e.getElementsByClassName(o):e.getElementsByTagName(n):e.querySelector(n)),t.toArray(i)}}(nx,nx.GLOBAL),function(t,e){var n,i=e.document,r=/^\s*<(\w+|!)[^>]*>/,s=t.declare("nx.zepto.Core",{statics:{start:function(e,o){var a;if(!e)return s.Z();if("string"==typeof e)if(e=e.trim(),"<"==e[0]&&r.test(e))a=t.fragment(e,RegExp.$1,o),e=null;else{if(o!==n)return t.$(o).find(e);a=t.qsa(i,e)}else{if(t.isFunction(e))return t.$(i).ready(e);if(s.isZ(e))return e;if(t.isArray(e))a=t.compact(e);else if(t.isObject(e))a=[e],e=null;else if(r.test(e))a=t.fragment(e.trim(),RegExp.$1,o),e=null;else{if(o!==n)return t.$(o).find(e);a=t.qsa(i,e)}}return s.Z(a,e)},Z:function(e,n){return e=e||[],e.__proto__=t.$.fn,e.selector=n||"",e},isZ:function(t){return t instanceof s.Z}}});t.$=function(t,e){return s.start(t,e)},t.$.fn={},t.mix(t.$,{})}(nx,nx.GLOBAL),function(t,e){var n,i=e.document,r=t.$,s=[],o=s.slice,a=s.map,c=!!i.documentElement.contains,u={},l={},h={"column-count":1,columns:1,"font-weight":1,"line-height":1,opacity:1,"z-index":1,zoom:1},f=t.declare("nx.zepto.ZeptoStatic",{statics:{setAttribute:function(t,e,n){null==n?t.removeAttribute(e):t.setAttribute(e,n)},className:function(t,e){var i=t.className||"",r=i&&i.baseVal!==n;return e===n?r?i.baseVal:i:void(r?i.baseVal=e:t.className=e)},classRE:function(t){return!t in l&&(l[t]=new RegExp("(^|\\s)"+t+"(\\s|$)")),l[t]},maybeAddPx:function(e,n){return"number"!=typeof n||h[t.dasherize(e)]?n:n+"px"},defaultDisplay:function(t){var e,n;return u[t]||(e=i.createElement(t),i.body.appendChild(e),n=getComputedStyle(e,"").getPropertyValue("display"),e.parentNode.removeChild(e),"none"==n&&(n="block"),u[t]=n),u[t]},children:function(t){if("children"in t)return o.call(t.children);var e=t.childNodes;return a.call(e,function(t){return 1==t.nodeType?t:void 0})},filtered:function(t,e){return null==e?r(t):r(t).filter(e)},funcArg:function(e,n,i,r){return t.isFunction(n)?n.call(e,i,r):n},traverseNode:function(t,e){e(t);for(var n=0,i=t.childNodes.length;i>n;n++)f.traverseNode(t.childNodes[n],e)},contains:function(){return c?function(t,e){return t!==e&&t.contains(e)}:function(t,e){for(;e&&(e=e.parentNode);)if(e===t)return!0;return!1}}()}});t.mix(t.$,f.__statics__)}(nx,nx.GLOBAL),function(t,e){var n,i,r,s=e.document,o=t.$,a=[],c=a.slice,u=a.filter,l=/([A-Z])/g,h=/^(?:body|html)$/i,f={tabindex:"tabIndex",readonly:"readOnly","for":"htmlFor","class":"className",maxlength:"maxLength",cellspacing:"cellSpacing",cellpadding:"cellPadding",rowspan:"rowSpan",colspan:"colSpan",usemap:"useMap",frameborder:"frameBorder",contenteditable:"contentEditable"},d=["after","prepend","before","append"],p=t.declare("nx.zepto.Proto",{statics:{forEach:a.forEach,reduce:a.reduce,push:a.push,sort:a.sort,indexOf:a.indexOf,concat:a.concat,map:function(e){return o(t.map(this,function(t,n){return e.call(t,n,t)}))},slice:function(){return o(c.apply(this,arguments))},get:function(t){return t===n?c.call(this):this[t>=0?t:t+this.length]},toArray:function(){return this.get()},size:function(){return this.length},remove:function(){return this.each(function(){null!=this.parentNode&&this.parentNode.removeChild(this)})},each:function(t){return a.every.call(this,function(e,n){return t.call(e,n,e)!==!1}),this},filter:function(e){return t.isFunction(e)?this.not(this.not(e)):o(u.call(this,function(n){return t.matches(n,e)}))},add:function(e,n){return o(t.uniq(this.concat(o(e,n))))},is:function(e){return this.length>0&&t.matches(this[0],e)},not:function(e){var i=[];if(t.isFunction(e)&&e.call!==n)this.each(function(t){e.call(this,t)||i.push(this)});else{var r="string"==typeof e?this.filter(e):t.isArrayLike(e)&&t.isFunction(e.item)?c.call(e):o(e);this.forEach(function(t){r.indexOf(t)<0&&i.push(t)})}return o(i)},has:function(e){return this.filter(function(){return t.isObject(e)?o.contains(this,e):o(this).find(e).size()})},eq:function(t){return-1===t?this.slice(t):this.slice(t,+t+1)},first:function(){var e=this[0];return e&&!t.isObject(e)?e:o(e)},last:function(){var e=this[this.length-1];return e&&!t.isObject(e)?e:o(e)},find:function(e){var n,i=this;return n=e?"object"==typeof e?o(e).filter(function(){var t=this;return a.some.call(i,function(e){return o.contains(e,t)})}):1==this.length?o(t.qsa(this[0],e)):this.map(function(){return t.qsa(this,e)}):o()},closest:function(e,n){var i=this[0],r=!1;for("object"==typeof e&&(r=o(e));i&&!(r?r.indexOf(i)>=0:t.matches(i,e));)i=i!==n&&!t.isDocument(i)&&i.parentNode;return o(i)},parents:function(t){for(var e=[],n=this;n.length>0;)n=o.map(n,function(t){return(t=t.parentNode)&&!isDocument(t)&&e.indexOf(t)<0?(e.push(t),t):void 0});return o.filtered(e,t)},parent:function(t){return o.filtered(uniq(this.pluck("parentNode")),t)},children:function(t){return o.filtered(this.map(function(){return o.children(this)}),t)},contents:function(){return this.map(function(){return c.call(this.childNodes)})},siblings:function(t){return o.filtered(this.map(function(t,e){return u.call(o.children(e.parentNode),function(t){return t!==e})}),t)},empty:function(){return this.each(function(){this.innerHTML=""})},pluck:function(t){return o.map(this,function(e){return e[t]})},show:function(){return this.each(function(){"none"==this.style.display&&(this.style.display=""),"none"==getComputedStyle(this,"").getPropertyValue("display")&&(this.style.display=o.defaultDisplay(this.nodeName))})},replaceWith:function(t){return this.before(t).remove()},wrap:function(e){var n=t.isFunction(e);if(this[0]&&!n)var i=o(e).get(0),r=i.parentNode||this.length>1;return this.each(function(t){o(this).wrapAll(n?e.call(this,t):r?i.cloneNode(!0):i)})},wrapAll:function(t){if(this[0]){o(this[0]).before(t=o(t));for(var e;(e=t.children()).length;)t=e.first();o(t).append(this)}return this},wrapInner:function(e){var n=t.isFunction(e);return this.each(function(t){var i=o(this),r=i.contents(),s=n?e.call(this,t):e;r.length?r.wrapAll(s):i.append(s)})},unwrap:function(){return this.parent().each(function(){o(this).replaceWith(o(this).children())}),this},clone:function(){return this.map(function(){return this.cloneNode(!0)})},hide:function(){return this.css("display","none")},toggle:function(t){return this.each(function(){var e=o(this);(t===n?"none"==e.css("display"):t)?e.show():e.hide()})},prev:function(t){return o(this.pluck("previousElementSibling")).filter(t||"*")},next:function(t){return o(this.pluck("nextElementSibling")).filter(t||"*")},html:function(t){return 0 in arguments?this.each(function(e){var n=this.innerHTML;o(this).empty().append(o.funcArg(this,t,e,n))}):0 in this?this[0].innerHTML:null},text:function(t){return 0 in arguments?this.each(function(e){var n=o.funcArg(this,t,e,this.textContent);this.textContent=null==n?"":""+n}):0 in this?this[0].textContent:null},attr:function(e,r){var s;return"string"!=typeof e||1 in arguments?this.each(function(n){if(1===this.nodeType)if(t.isObject(e))for(i in e)o.setAttribute(this,i,e[i]);else o.setAttribute(this,e,o.funcArg(this,r,n,this.getAttribute(e)))}):this.length&&1===this[0].nodeType?!(s=this[0].getAttribute(e))&&e in this[0]?this[0][e]:s:n},removeAttr:function(t){return this.each(function(){1===this.nodeType&&t.split(" ").forEach(function(t){o.setAttribute(this,t)},this)})},prop:function(t,e){return t=f[t]||t,1 in arguments?this.each(function(n){this[t]=o.funcArg(this,e,n,this[t])}):this[0]&&this[0][t]},data:function(e,i){var r="data-"+e.replace(l,"-$1").toLowerCase(),s=1 in arguments?this.attr(r,i):this.attr(r);return null!==s?t.deserializeValue(s):n},val:function(t){return 0 in arguments?this.each(function(e){this.value=o.funcArg(this,t,e,this.value)}):this[0]&&(this[0].multiple?o(this[0]).find("option").filter(function(){return this.selected}).pluck("value"):this[0].value)},offset:function(t){if(t)return this.each(function(e){var n=o(this),i=o.funcArg(this,t,e,n.offset()),r=n.offsetParent().offset(),s={top:i.top-r.top,left:i.left-r.left};"static"==n.css("position")&&(s.position="relative"),n.css(s)});if(!this.length)return null;var e=this[0].getBoundingClientRect();return{left:e.left+window.pageXOffset,top:e.top+window.pageYOffset,width:Math.round(e.width),height:Math.round(e.height)}},css:function(e,n){if(arguments.length<2){var r,s=this[0];if(!s)return;if(r=getComputedStyle(s,""),"string"==typeof e)return s.style[o.camelCase(e)]||r.getPropertyValue(e);if(t.isArray(e)){var a={};return t.each(e,function(t,e){a[e]=s.style[o.camelCase(e)]||r.getPropertyValue(e)}),a}}var c="";if("string"==t.type(e))n||0===n?c=t.dasherize(e)+":"+o.maybeAddPx(e,n):this.each(function(){this.style.removeProperty(t.dasherize(e))});else for(i in e)e[i]||0===e[i]?c+=t.dasherize(i)+":"+o.maybeAddPx(i,e[i])+";":this.each(function(){this.style.removeProperty(t.dasherize(i))});return this.each(function(){this.style.cssText+=";"+c})},index:function(t){return t?this.indexOf(o(t)[0]):this.parent().children().indexOf(this[0])},hasClass:function(t){return t?a.some.call(this,function(t){return this.test(o.className(t))},o.classRE(t)):!1},addClass:function(t){return t?this.each(function(e){if("className"in this){r=[];var n=o.className(this),i=o.funcArg(this,t,e,n);i.split(/\s+/g).forEach(function(t){o(this).hasClass(t)||r.push(t)},this),r.length&&o.className(this,n+(n?" ":"")+r.join(" "))}}):this},removeClass:function(t){return this.each(function(e){if("className"in this){if(t===n)return o.className(this,"");r=o.className(this),o.funcArg(this,t,e,r).split(/\s+/g).forEach(function(t){r=r.replace(o.classRE(t)," ")}),o.className(this,r.trim())}})},toggleClass:function(t,e){return t?this.each(function(i){var r=o(this),s=o.funcArg(this,t,i,o.className(this));s.split(/\s+/g).forEach(function(t){(e===n?!r.hasClass(t):e)?r.addClass(t):r.removeClass(t)})}):this},scrollTop:function(t){if(this.length){var e="scrollTop"in this[0];return t===n?e?this[0].scrollTop:this[0].pageYOffset:this.each(e?function(){this.scrollTop=t}:function(){this.scrollTo(this.scrollX,t)})}},scrollLeft:function(t){if(this.length){var e="scrollLeft"in this[0];return t===n?e?this[0].scrollLeft:this[0].pageXOffset:this.each(e?function(){this.scrollLeft=t}:function(){this.scrollTo(t,this.scrollY)})}},position:function(){if(this.length){var t=this[0],e=this.offsetParent(),n=this.offset(),i=h.test(e[0].nodeName)?{top:0,left:0}:e.offset();return n.top-=parseFloat(o(t).css("margin-top"))||0,n.left-=parseFloat(o(t).css("margin-left"))||0,i.top+=parseFloat(o(e[0]).css("border-top-width"))||0,i.left+=parseFloat(o(e[0]).css("border-left-width"))||0,{top:n.top-i.top,left:n.left-i.left}}},offsetParent:function(){return this.map(function(){for(var t=this.offsetParent||s.body;t&&!h.test(t.nodeName)&&"static"==o(t).css("position");)t=t.offsetParent;return t})}}});d.forEach(function(n,i){var r=i%2;o.fn[n]=function(){var n,a,c=o.map(arguments,function(e){return n=t.type(e),"object"==n||"array"==n||null==e?e:t.fragment(e)}),u=this.length>1;return c.length<1?this:this.each(function(t,n){a=r?n:n.parentNode,n=0==i?n.nextSibling:1==i?n.firstChild:2==i?n:null;var l=o.contains(s.documentElement,a);c.forEach(function(t){if(u)t=t.cloneNode(!0);else if(!a)return o(t).remove();a.insertBefore(t,n),l&&o.traverseNode(t,function(t){null==t.nodeName||"SCRIPT"!==t.nodeName.toUpperCase()||t.type&&"text/javascript"!==t.type||t.src||e.eval.call(e,t.innerHTML)})})})},o.fn[r?n+"To":"insert"+(i?"Before":"After")]=function(t){return o(t)[n](this),this}}),t.mix(o.fn,p.__statics__)}(nx,nx.GLOBAL);
+(function (nx, global) {
+
+  var document = global.document, undefined;
+  var readyRE = /complete|loaded|interactive/;
+  var singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/;
+  var tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig;
+  var fragmentRE = /^\s*<(\w+|!)[^>]*>/;
+  var simpleSelectorRE = /^[\w-]*$/;
+  var table = document.createElement('table'),
+    tableRow = document.createElement('tr'),
+    containers = {
+      'tr': document.createElement('tbody'),
+      'tbody': table,
+      'thead': table,
+      'tfoot': table,
+      'td': tableRow,
+      'th': tableRow,
+      '*': document.createElement('div')
+    };
+  var methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'];
+  var emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter;
+
+
+  nx.ready = function (callback) {
+    if (readyRE.test(document.readyState) && document.body) {
+      callback(nx);
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        callback(nx);
+      }, false);
+    }
+    return this;
+  };
+
+
+  nx.matches = function (element, selector) {
+    if (!selector || !element || element.nodeType !== 1) {
+      return false;
+    }
+    var matchesSelector = element.matches
+      || element.webkitMatchesSelector
+      || element.mozMatchesSelector
+      || element.oMatchesSelector
+      || element.matchesSelector;
+
+    if (matchesSelector) {
+      return matchesSelector.call(element, selector);
+    }
+
+    var matches = (element.document || element.ownerDocument).querySelectorAll(selector),
+      i = matches.length;
+    while (--i >= 0 && matches.item(i) !== element) ;
+    return i > -1;
+  };
+
+
+  nx.fragment = function (html, name, properties) {
+    var dom, nodes, container;
+    if (singleTagRE.test(html)) {
+      dom = nx.$(document.createElement(RegExp.$1));
+    }
+
+    if (!dom) {
+      if (html.replace) {
+        html = html.replace(tagExpanderRE, "<$1></$2>");
+      }
+
+      if (name === undefined) {
+        name = fragmentRE.test(html) && RegExp.$1;
+      }
+
+      if (!(name in containers)) {
+        name = '*';
+      }
+
+      container = containers[name];
+      container.innerHTML = '' + html;
+      dom = nx.each(slice.call(container.childNodes), function () {
+        container.removeChild(this);
+      });
+    }
+
+    if (nx.isPlainObject(properties)) {
+      nodes = nx.$(dom);
+      nx.each(properties, function (key, value) {
+        if (methodAttributes.indexOf(key) > -1) {
+          nodes[key](value);
+        } else {
+          nodes.attr(key, value);
+        }
+      });
+    }
+
+    return dom;
+  };
+
+  nx.qsa = function (element, selector) {
+    var result, maybeId = selector[0] === '#',
+      maybeClass = !maybeId && selector[0] == '.',
+      nameOnly = (maybeId || maybeClass) ? selector.slice(1) : selector,
+      isSimple = simpleSelectorRE.test(nameOnly);
+    if (nx.isDocument(element) && isSimple && maybeId) {
+      result = element.getElementById(nameOnly);
+    } else {
+      if (element.nodeType == 1 || element.nodeType == 9) {
+        if (isSimple && !maybeId) {
+          if (maybeClass) {
+            result = element.getElementsByClassName(nameOnly);
+          } else {
+            result = element.getElementsByTagName(selector);
+          }
+        } else {
+          result = element.querySelector(selector);
+        }
+      }
+    }
+    return nx.toArray(result);
+  };
+
+
+}(nx, nx.GLOBAL));
+
+(function (nx, global) {
+
+  var document = global.document, undefined;
+  var fragmentRE = /^\s*<(\w+|!)[^>]*>/;
+
+  var Zepto = nx.declare('nx.zepto.Core', {
+    statics: {
+      start: function (selector, context) {
+        var dom;
+        if (!selector) {
+          return Zepto.Z();
+        } else if (typeof selector == 'string') {
+          selector = selector.trim();
+          // If it's a html fragment, create nodes from it
+          // Note: In both Chrome 21 and Firefox 15, DOM error 12
+          // is thrown if the fragment doesn't begin with <
+          if (selector[0] == '<' && fragmentRE.test(selector)) {
+            dom = nx.fragment(selector, RegExp.$1, context);
+            selector = null;
+          } else if (context !== undefined) {
+            // If there's a context, create a collection on that context first, and select
+            // nodes from there
+            return nx.$(context).find(selector);
+          } else {
+            // If it's a CSS selector, use it to select nodes.
+            dom = nx.qsa(document, selector);
+          }
+        }
+        // If a function is given, call it when the DOM is ready
+        else if (nx.isFunction(selector)) return nx.$(document).ready(selector);
+        // If a Zepto collection is given, just return it
+        else if (Zepto.isZ(selector)) return selector;
+        else {
+          // normalize array if an array of nodes is given
+          if (nx.isArray(selector)) dom = nx.compact(selector);
+          // Wrap DOM nodes.
+          else if (nx.isObject(selector))
+            dom = [selector], selector = null;
+          // If it's a html fragment, create nodes from it
+          else if (fragmentRE.test(selector))
+            dom = nx.fragment(selector.trim(), RegExp.$1, context), selector = null;
+          // If there's a context, create a collection on that context first, and select
+          // nodes from there
+          else if (context !== undefined) return nx.$(context).find(selector);
+          // And last but no least, if it's a CSS selector, use it to select nodes.
+          else dom = nx.qsa(document, selector);
+        }
+        // create a new Zepto collection from the nodes found
+        return Zepto.Z(dom, selector);
+      },
+      Z: function (dom, selector) {
+        dom = dom || [];
+        dom.__proto__ = nx.$.fn;
+        dom.selector = selector || '';
+        return dom;
+      },
+      isZ: function (obj) {
+        return obj instanceof Zepto.Z;
+      }
+    }
+  });
+
+
+  nx.$ = function (selector, context) {
+    return Zepto.start(selector, context);
+  };
+
+  nx.$.fn = {};
+
+
+
+  nx.mix(nx.$,{
+
+  })
+
+
+
+
+}(nx, nx.GLOBAL));
+
+(function (nx, global) {
+
+  var undefined;
+  var document = global.document;
+  var $ = nx.$;
+  var emptyArray = [],
+    slice = emptyArray.slice,
+    map = emptyArray.map;
+  var supportContains = !!document.documentElement.contains;
+  var elementDisplay = {}, classCache = {};
+  var cssNumber = {
+    'column-count': 1,
+    'columns': 1,
+    'font-weight': 1,
+    'line-height': 1,
+    'opacity': 1,
+    'z-index': 1,
+    'zoom': 1
+  };
+
+  var ZeptoStatic = nx.declare('nx.zepto.ZeptoStatic', {
+    statics: {
+      setAttribute: function (node, name, value) {
+        value == null ? node.removeAttribute(name) : node.setAttribute(name, value);
+      },
+      className: function (node, value) {
+        var klass = node.className || '',
+          svg = klass && klass.baseVal !== undefined;
+
+        if (value === undefined) return svg ? klass.baseVal : klass;
+        svg ? (klass.baseVal = value) : (node.className = value)
+      },
+      classRE: function (name) {
+        if (!name in classCache) {
+          classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)');
+        }
+        return classCache[name];
+      },
+      maybeAddPx: function (name, value) {
+        return (typeof value == 'number' && !cssNumber[nx.dasherize(name)]) ? value + 'px' : value
+      },
+      defaultDisplay: function (nodeName) {
+        var element, display;
+        if (!elementDisplay[nodeName]) {
+          element = document.createElement(nodeName);
+          document.body.appendChild(element);
+          display = getComputedStyle(element, '').getPropertyValue("display");
+          element.parentNode.removeChild(element);
+          display == "none" && (display = "block");
+          elementDisplay[nodeName] = display;
+        }
+        return elementDisplay[nodeName];
+      },
+      children: function (element) {
+        if ('children' in element) {
+          return slice.call(element.children);
+        } else {
+          var nodes = element.childNodes;
+          return map.call(nodes, function (node) {
+            if (node.nodeType == 1) return node;
+          });
+        }
+      },
+      filtered: function (nodes, selector) {
+        return selector == null ? $(nodes) : $(nodes).filter(selector)
+      },
+      funcArg: function (context, arg, idx, payload) {
+        return nx.isFunction(arg) ? arg.call(context, idx, payload) : arg;
+      },
+      traverseNode: function (node, fun) {
+        fun(node);
+        for (var i = 0, len = node.childNodes.length; i < len; i++) {
+          ZeptoStatic.traverseNode(node.childNodes[i], fun);
+        }
+      },
+      contains: (function () {
+        if (supportContains) {
+          return function (parent, node) {
+            return parent !== node && parent.contains(node)
+          };
+        } else {
+          return function (parent, node) {
+            while (node && (node = node.parentNode))
+              if (node === parent) return true;
+            return false;
+          }
+        }
+      }())
+    }
+  });
+
+
+  nx.mix(
+    nx.$,
+    ZeptoStatic.__statics__
+  );
+
+
+}(nx, nx.GLOBAL));
+
+(function (nx, global) {
+
+  var document = global.document, undefined;
+  var $ = nx.$;
+  var key;
+  var classList;
+  var emptyArray = [],
+    slice = emptyArray.slice,
+    filter = emptyArray.filter;
+  var capitalRE = /([A-Z])/g;
+  var rootNodeRE = /^(?:body|html)$/i;
+  var propMap = {
+    'tabindex': 'tabIndex',
+    'readonly': 'readOnly',
+    'for': 'htmlFor',
+    'class': 'className',
+    'maxlength': 'maxLength',
+    'cellspacing': 'cellSpacing',
+    'cellpadding': 'cellPadding',
+    'rowspan': 'rowSpan',
+    'colspan': 'colSpan',
+    'usemap': 'useMap',
+    'frameborder': 'frameBorder',
+    'contenteditable': 'contentEditable'
+  };
+  var adjacencyOperators = ['after', 'prepend', 'before', 'append'];
+
+  var ZeptoProto = nx.declare('nx.zepto.Proto', {
+    statics: {
+      forEach: emptyArray.forEach,
+      reduce: emptyArray.reduce,
+      push: emptyArray.push,
+      sort: emptyArray.sort,
+      indexOf: emptyArray.indexOf,
+      concat: emptyArray.concat,
+      map: function (fn) {
+        return $(
+          nx.map(this, function (el, i) {
+            return fn.call(el, i, el)
+          })
+        );
+      },
+      slice: function () {
+        return $(
+          slice.apply(this, arguments)
+        );
+      },
+      get: function (idx) {
+        return idx === undefined ? slice.call(this) : this[idx >= 0 ? idx : idx + this.length]
+      },
+      toArray: function () {
+        return this.get();
+      },
+      size: function () {
+        return this.length;
+      },
+      remove: function () {
+        return this.each(function () {
+          if (this.parentNode != null) {
+            this.parentNode.removeChild(this);
+          }
+        })
+      },
+      each: function (callback) {
+        emptyArray.every.call(this, function (el, idx) {
+          return callback.call(el, idx, el) !== false;
+        });
+        return this;
+      },
+      filter: function (selector) {
+        if (nx.isFunction(selector)) {
+          return this.not(this.not(selector));
+        }
+        return $(
+          filter.call(this, function (element) {
+            return nx.matches(element, selector);
+          })
+        );
+      },
+      add: function (selector, context) {
+        return $(
+          nx.uniq(this.concat($(selector, context)))
+        );
+      },
+      is: function (selector) {
+        return this.length > 0 && nx.matches(this[0], selector);
+      },
+      not: function (selector) {
+        var nodes = [];
+        if (nx.isFunction(selector) && selector.call !== undefined)
+          this.each(function (idx) {
+            if (!selector.call(this, idx)) nodes.push(this)
+          });
+        else {
+          var excludes = typeof selector == 'string' ? this.filter(selector) :
+            (nx.isArrayLike(selector) && nx.isFunction(selector.item)) ? slice.call(selector) : $(selector);
+          this.forEach(function (el) {
+            if (excludes.indexOf(el) < 0) nodes.push(el)
+          });
+        }
+        return $(nodes);
+      },
+      has: function (selector) {
+        return this.filter(function () {
+          return nx.isObject(selector) ?
+            $.contains(this, selector) :
+            $(this).find(selector).size();
+        })
+      },
+      eq: function (idx) {
+        return idx === -1 ? this.slice(idx) : this.slice(idx, +idx + 1);
+      },
+      first: function () {
+        var el = this[0];
+        return el && !nx.isObject(el) ? el : $(el);
+      },
+      last: function () {
+        var el = this[this.length - 1];
+        return el && !nx.isObject(el) ? el : $(el);
+      },
+      find: function (selector) {
+        var result, $this = this;
+        if (!selector) result = $();
+        else if (typeof selector == 'object')
+          result = $(selector).filter(function () {
+            var node = this;
+            return emptyArray.some.call($this, function (parent) {
+              return $.contains(parent, node)
+            })
+          });
+        else if (this.length == 1) result = $(nx.qsa(this[0], selector));
+        else result = this.map(function () {
+            return nx.qsa(this, selector)
+          });
+        return result;
+      },
+      closest: function (selector, context) {
+        var node = this[0], collection = false;
+        if (typeof selector == 'object') collection = $(selector);
+        while (node && !(collection ? collection.indexOf(node) >= 0 : nx.matches(node, selector)))
+          node = node !== context && !nx.isDocument(node) && node.parentNode;
+        return $(node);
+      },
+      parents: function (selector) {
+        var ancestors = [], nodes = this;
+        while (nodes.length > 0)
+          nodes = $.map(nodes, function (node) {
+            if ((node = node.parentNode) && !isDocument(node) && ancestors.indexOf(node) < 0) {
+              ancestors.push(node);
+              return node;
+            }
+          });
+        return $.filtered(ancestors, selector)
+      },
+      parent: function (selector) {
+        return $.filtered(uniq(this.pluck('parentNode')), selector)
+      },
+      children: function (selector) {
+        return $.filtered(this.map(function () {
+          return $.children(this)
+        }), selector)
+      },
+      contents: function () {
+        return this.map(function () {
+          return slice.call(this.childNodes)
+        })
+      },
+      siblings: function (selector) {
+        return $.filtered(this.map(function (i, el) {
+          return filter.call($.children(el.parentNode), function (child) {
+            return child !== el
+          })
+        }), selector);
+      },
+      empty: function () {
+        return this.each(function () {
+          this.innerHTML = ''
+        })
+      },
+      // `pluck` is borrowed from Prototype.js
+      pluck: function (property) {
+        return $.map(this, function (el) {
+          return el[property]
+        });
+      },
+      show: function () {
+        return this.each(function () {
+          this.style.display == 'none' && (this.style.display = '');
+          if (getComputedStyle(this, '').getPropertyValue('display') == 'none')
+            this.style.display = $.defaultDisplay(this.nodeName)
+        })
+      },
+      replaceWith: function (newContent) {
+        return this.before(newContent).remove()
+      },
+      wrap: function (structure) {
+        var func = nx.isFunction(structure);
+        if (this[0] && !func)
+          var dom = $(structure).get(0),
+            clone = dom.parentNode || this.length > 1;
+
+        return this.each(function (index) {
+          $(this).wrapAll(
+            func ? structure.call(this, index) :
+              clone ? dom.cloneNode(true) : dom
+          )
+        })
+      },
+      wrapAll: function (structure) {
+        if (this[0]) {
+          $(this[0]).before(structure = $(structure));
+          var children;
+          // drill down to the inmost element
+          while ((children = structure.children()).length) structure = children.first();
+          $(structure).append(this);
+        }
+        return this;
+      },
+      wrapInner: function (structure) {
+        var func = nx.isFunction(structure);
+        return this.each(function (index) {
+          var self = $(this), contents = self.contents(),
+            dom = func ? structure.call(this, index) : structure;
+          contents.length ? contents.wrapAll(dom) : self.append(dom)
+        })
+      },
+      unwrap: function () {
+        this.parent().each(function () {
+          $(this).replaceWith($(this).children())
+        });
+        return this;
+      },
+      clone: function () {
+        return this.map(function () {
+          return this.cloneNode(true);
+        });
+      },
+      hide: function () {
+        return this.css('display', 'none');
+      },
+      toggle: function (setting) {
+        return this.each(function () {
+          var el = $(this);
+          (setting === undefined ? el.css('display') == 'none' : setting) ? el.show() : el.hide()
+        })
+      },
+      prev: function (selector) {
+        return $(this.pluck('previousElementSibling')).filter(selector || '*')
+      },
+      next: function (selector) {
+        return $(this.pluck('nextElementSibling')).filter(selector || '*')
+      },
+      html: function (html) {
+        return 0 in arguments ?
+          this.each(function (idx) {
+            var originHtml = this.innerHTML;
+            $(this).empty().append($.funcArg(this, html, idx, originHtml))
+          }) :
+          (0 in this ? this[0].innerHTML : null);
+      },
+      text: function (text) {
+        return 0 in arguments ?
+          this.each(function (idx) {
+            var newText = $.funcArg(this, text, idx, this.textContent);
+            this.textContent = newText == null ? '' : '' + newText
+          }) :
+          (0 in this ? this[0].textContent : null)
+      },
+      attr: function (name, value) {
+        var result;
+        return (typeof name == 'string' && !(1 in arguments)) ?
+          (!this.length || this[0].nodeType !== 1 ? undefined :
+              (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
+          ) :
+          this.each(function (idx) {
+            if (this.nodeType !== 1) return;
+            if (nx.isObject(name)) for (key in name) $.setAttribute(this, key, name[key]);
+            else $.setAttribute(this, name, $.funcArg(this, value, idx, this.getAttribute(name)));
+          })
+      },
+      removeAttr: function (name) {
+        return this.each(function () {
+          this.nodeType === 1 && name.split(' ').forEach(function (attribute) {
+            $.setAttribute(this, attribute)
+          }, this)
+        })
+      },
+      prop: function (name, value) {
+        name = propMap[name] || name;
+        return (1 in arguments) ?
+          this.each(function (idx) {
+            this[name] = $.funcArg(this, value, idx, this[name])
+          }) :
+          (this[0] && this[0][name]);
+      },
+      data: function (name, value) {
+        var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase();
+
+        var data = (1 in arguments) ?
+          this.attr(attrName, value) :
+          this.attr(attrName);
+
+        return data !== null ? nx.deserializeValue(data) : undefined;
+      },
+      val: function (value) {
+        return 0 in arguments ?
+          this.each(function (idx) {
+            this.value = $.funcArg(this, value, idx, this.value)
+          }) :
+          (this[0] && (this[0].multiple ?
+              $(this[0]).find('option').filter(function () {
+                return this.selected
+              }).pluck('value') :
+              this[0].value)
+          )
+      },
+      offset: function (coordinates) {
+        if (coordinates) return this.each(function (index) {
+          var $this = $(this),
+            coords = $.funcArg(this, coordinates, index, $this.offset()),
+            parentOffset = $this.offsetParent().offset(),
+            props = {
+              top: coords.top - parentOffset.top,
+              left: coords.left - parentOffset.left
+            };
+
+          if ($this.css('position') == 'static') props['position'] = 'relative';
+          $this.css(props);
+        });
+        if (!this.length) return null;
+        var obj = this[0].getBoundingClientRect();
+        return {
+          left: obj.left + window.pageXOffset,
+          top: obj.top + window.pageYOffset,
+          width: Math.round(obj.width),
+          height: Math.round(obj.height)
+        }
+      },
+      css: function (property, value) {
+        if (arguments.length < 2) {
+          var computedStyle, element = this[0];
+          if (!element) return;
+          computedStyle = getComputedStyle(element, '');
+          if (typeof property == 'string')
+            return element.style[$.camelCase(property)] || computedStyle.getPropertyValue(property);
+          else if (nx.isArray(property)) {
+            var props = {};
+            nx.each(property, function (_, prop) {
+              props[prop] = (element.style[$.camelCase(prop)] || computedStyle.getPropertyValue(prop))
+            });
+            return props;
+          }
+        }
+
+        var css = '';
+        if (nx.type(property) == 'string') {
+          if (!value && value !== 0)
+            this.each(function () {
+              this.style.removeProperty(nx.dasherize(property))
+            });
+          else
+            css = nx.dasherize(property) + ':' + $.maybeAddPx(property, value)
+        } else {
+          for (key in property)
+            if (!property[key] && property[key] !== 0)
+              this.each(function () {
+                this.style.removeProperty(nx.dasherize(key))
+              });
+            else
+              css += nx.dasherize(key) + ':' + $.maybeAddPx(key, property[key]) + ';';
+        }
+
+        return this.each(function () {
+          this.style.cssText += ';' + css
+        })
+      },
+      index: function (element) {
+        return element ? this.indexOf($(element)[0]) : this.parent().children().indexOf(this[0])
+      },
+      hasClass: function (name) {
+        if (!name) return false;
+        return emptyArray.some.call(this, function (el) {
+          return this.test($.className(el))
+        }, $.classRE(name))
+      },
+      addClass: function (name) {
+        if (!name) return this;
+        return this.each(function (idx) {
+          if (!('className' in this)) return;
+          classList = [];
+          var cls = $.className(this), newName = $.funcArg(this, name, idx, cls);
+          newName.split(/\s+/g).forEach(function (klass) {
+            if (!$(this).hasClass(klass)) classList.push(klass)
+          }, this);
+          classList.length && $.className(this, cls + (cls ? ' ' : '') + classList.join(' '))
+        })
+      },
+      removeClass: function (name) {
+        return this.each(function (idx) {
+          if (!('className' in this)) return;
+          if (name === undefined) return $.className(this, '');
+          classList = $.className(this);
+          $.funcArg(this, name, idx, classList).split(/\s+/g).forEach(function (klass) {
+            classList = classList.replace($.classRE(klass), ' ')
+          });
+          $.className(this, classList.trim())
+        })
+      },
+      toggleClass: function (name, when) {
+        if (!name) return this;
+        return this.each(function (idx) {
+          var $this = $(this), names = $.funcArg(this, name, idx, $.className(this));
+          names.split(/\s+/g).forEach(function (klass) {
+            (when === undefined ? !$this.hasClass(klass) : when) ?
+              $this.addClass(klass) : $this.removeClass(klass)
+          })
+        })
+      },
+      scrollTop: function (value) {
+        if (!this.length) return;
+        var hasScrollTop = 'scrollTop' in this[0];
+        if (value === undefined) return hasScrollTop ? this[0].scrollTop : this[0].pageYOffset;
+        return this.each(hasScrollTop ?
+          function () {
+            this.scrollTop = value
+          } :
+          function () {
+            this.scrollTo(this.scrollX, value)
+          })
+      },
+      scrollLeft: function (value) {
+        if (!this.length) return;
+        var hasScrollLeft = 'scrollLeft' in this[0];
+        if (value === undefined) return hasScrollLeft ? this[0].scrollLeft : this[0].pageXOffset;
+        return this.each(hasScrollLeft ?
+          function () {
+            this.scrollLeft = value
+          } :
+          function () {
+            this.scrollTo(value, this.scrollY)
+          })
+      },
+      position: function () {
+        if (!this.length) return;
+
+        var elem = this[0],
+        // Get *real* offsetParent
+          offsetParent = this.offsetParent(),
+        // Get correct offsets
+          offset = this.offset(),
+          parentOffset = rootNodeRE.test(offsetParent[0].nodeName) ? {top: 0, left: 0} : offsetParent.offset();
+
+        // Subtract element margins
+        // note: when an element has margin: auto the offsetLeft and marginLeft
+        // are the same in Safari causing offset.left to incorrectly be 0
+        offset.top -= parseFloat($(elem).css('margin-top')) || 0;
+        offset.left -= parseFloat($(elem).css('margin-left')) || 0;
+
+        // Add offsetParent borders
+        parentOffset.top += parseFloat($(offsetParent[0]).css('border-top-width')) || 0;
+        parentOffset.left += parseFloat($(offsetParent[0]).css('border-left-width')) || 0;
+
+        // Subtract the two offsets
+        return {
+          top: offset.top - parentOffset.top,
+          left: offset.left - parentOffset.left
+        }
+      },
+      offsetParent: function () {
+        return this.map(function () {
+          var parent = this.offsetParent || document.body;
+          while (parent && !rootNodeRE.test(parent.nodeName) && $(parent).css('position') == 'static')
+            parent = parent.offsetParent;
+          return parent;
+        })
+      }
+    }
+  });
+
+
+  adjacencyOperators.forEach(function (operator, operatorIndex) {
+    var inside = operatorIndex % 2;
+
+    $.fn[operator] = function () {
+      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
+      var argType, nodes = $.map(arguments, function (arg) {
+          argType = nx.type(arg);
+          if (argType == 'object' || argType == 'array' || arg == null) {
+            return arg;
+          } else {
+            return nx.fragment(arg);
+          }
+        }),
+        parent, copyByClone = this.length > 1;
+      if (nodes.length < 1) {
+        return this;
+      }
+
+      return this.each(function (_, target) {
+        parent = inside ? target : target.parentNode;
+
+        // convert all methods to a 'before' operation
+        target = operatorIndex == 0 ? target.nextSibling :
+          operatorIndex == 1 ? target.firstChild :
+            operatorIndex == 2 ? target :
+              null;
+
+        var parentInDocument = $.contains(document.documentElement, parent);
+
+        nodes.forEach(function (node) {
+          if (copyByClone) {
+            node = node.cloneNode(true);
+          } else if (!parent) {
+            return $(node).remove();
+          }
+
+          parent.insertBefore(node, target);
+          if (parentInDocument) {
+            $.traverseNode(node, function (el) {
+              if (
+                el.nodeName != null
+                && el.nodeName.toUpperCase() === 'SCRIPT'
+                && (!el.type || el.type === 'text/javascript')
+                && !el.src
+              ) {
+                global['eval'].call(global, el.innerHTML);
+              }
+            });
+          }
+        })
+      })
+    };
+
+    // after    => insertAfter
+    // prepend  => prependTo
+    // before   => insertBefore
+    // append   => appendTo
+    $.fn[inside ? operator + 'To' : 'insert' + (operatorIndex ? 'Before' : 'After')] = function (html) {
+      $(html)[operator](this);
+      return this;
+    }
+  });
+
+  nx.mix(
+    $.fn,
+    ZeptoProto.__statics__
+  );
+
+
+}(nx, nx.GLOBAL));
