@@ -1,10 +1,9 @@
 (function (nx, global) {
 
   var document = global.document, undefined;
-  var DOMUtil = nx.DOMUtil;
   var fragmentRE = /^\s*<(\w+|!)[^>]*>/;
 
-  var Zepto = nx.declare('nx.Zepto', {
+  var Zepto = nx.declare('nx.zepto.Core', {
     statics: {
       start: function (selector, context) {
         var dom;
@@ -28,14 +27,14 @@
           }
         }
         // If a function is given, call it when the DOM is ready
-        else if (DOMUtil.isFunction(selector)) return nx.$(document).ready(selector);
+        else if (nx.isFunction(selector)) return nx.$(document).ready(selector);
         // If a Zepto collection is given, just return it
         else if (Zepto.isZ(selector)) return selector;
         else {
           // normalize array if an array of nodes is given
-          if (DOMUtil.isArray(selector)) dom = DOMUtil.compact(selector);
+          if (nx.isArray(selector)) dom = nx.compact(selector);
           // Wrap DOM nodes.
-          else if (DOMUtil.isObject(selector))
+          else if (nx.isObject(selector))
             dom = [selector], selector = null;
           // If it's a html fragment, create nodes from it
           else if (fragmentRE.test(selector))
@@ -67,5 +66,14 @@
   };
 
   nx.$.fn = {};
+
+
+
+  nx.mix(nx.$,{
+
+  })
+
+
+
 
 }(nx, nx.GLOBAL));

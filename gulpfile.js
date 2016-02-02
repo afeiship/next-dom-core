@@ -16,16 +16,12 @@
 
   gulp.task('uglify', ['clean'], function () {
     gulp.src([
-        conf.src + '/zepto-util.js',
-        conf.src + '/zepto-ready.js',
-        conf.src + '/zepto-matches.js',
-        conf.src + '/zepto-fragment.js',
-        conf.src + '/zepto-qsa.js',
-        conf.src + '/zepto-oop.js',
-        conf.src + '/zepto-static.js',
-        conf.src + '/zepto-proto.js'
+        conf.src + '/Base.js',
+        conf.src + '/Core.js',
+        conf.src + '/ZeptoStatic.js',
+        conf.src + '/ZeptoProto.js'
       ])
-      .pipe(concat('next-dom-core.js'))
+      .pipe(concat('nx.dom.core.js'))
       .pipe(uglify())
       //.pipe(rename({
       //  extname: '.min.js'

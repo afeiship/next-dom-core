@@ -1,13 +1,12 @@
 (function (nx, global) {
 
-  var document=global.document;
+  var document = global.document, undefined;
   var $ = nx.$;
-  var undefined, key;
+  var key;
   var classList;
   var emptyArray = [],
     slice = emptyArray.slice,
     filter = emptyArray.filter;
-  var DOMUtil = nx.DOMUtil;
   var capitalRE = /([A-Z])/g;
   var rootNodeRE = /^(?:body|html)$/i;
   var propMap = {
@@ -26,7 +25,7 @@
   };
   var adjacencyOperators = ['after', 'prepend', 'before', 'append'];
 
-  var ZeptoProto = nx.declare('nx.ZeptoProto', {
+  var ZeptoProto = nx.declare('nx.zepto.Proto', {
     statics: {
       forEach: emptyArray.forEach,
       reduce: emptyArray.reduce,
@@ -36,7 +35,7 @@
       concat: emptyArray.concat,
       map: function (fn) {
         return $(
-          $.map(this, function (el, i) {
+          nx.map(this, function (el, i) {
             return fn.call(el, i, el)
           })
         );
@@ -69,7 +68,7 @@
         return this;
       },
       filter: function (selector) {
-        if (DOMUtil.isFunction(selector)) {
+        if (nx.isFunction(selector)) {
           return this.not(this.not(selector));
         }
         return $(
@@ -80,7 +79,7 @@
       },
       add: function (selector, context) {
         return $(
-          DOMUtil.uniq(this.concat($(selector, context)))
+          nx.uniq(this.concat($(selector, context)))
         );
       },
       is: function (selector) {
@@ -88,13 +87,13 @@
       },
       not: function (selector) {
         var nodes = [];
-        if (DOMUtil.isFunction(selector) && selector.call !== undefined)
+        if (nx.isFunction(selector) && selector.call !== undefined)
           this.each(function (idx) {
             if (!selector.call(this, idx)) nodes.push(this)
           });
         else {
           var excludes = typeof selector == 'string' ? this.filter(selector) :
-            (DOMUtil.likeArray(selector) && DOMUtil.isFunction(selector.item)) ? slice.call(selector) : $(selector);
+            (nx.isArrayLike(selector) && nx.isFunction(selector.item)) ? slice.call(selector) : $(selector);
           this.forEach(function (el) {
             if (excludes.indexOf(el) < 0) nodes.push(el)
           });
@@ -103,7 +102,7 @@
       },
       has: function (selector) {
         return this.filter(function () {
-          return DOMUtil.isObject(selector) ?
+          return nx.isObject(selector) ?
             $.contains(this, selector) :
             $(this).find(selector).size();
         })
@@ -113,11 +112,11 @@
       },
       first: function () {
         var el = this[0];
-        return el && !DOMUtil.isObject(el) ? el : $(el);
+        return el && !nx.isObject(el) ? el : $(el);
       },
       last: function () {
         var el = this[this.length - 1];
-        return el && !DOMUtil.isObject(el) ? el : $(el);
+        return el && !nx.isObject(el) ? el : $(el);
       },
       find: function (selector) {
         var result, $this = this;
@@ -139,7 +138,7 @@
         var node = this[0], collection = false;
         if (typeof selector == 'object') collection = $(selector);
         while (node && !(collection ? collection.indexOf(node) >= 0 : nx.matches(node, selector)))
-          node = node !== context && !DOMUtil.isDocument(node) && node.parentNode;
+          node = node !== context && !nx.isDocument(node) && node.parentNode;
         return $(node);
       },
       parents: function (selector) {
@@ -151,14 +150,14 @@
               return node;
             }
           });
-        return DOMUtil.filtered(ancestors, selector)
+        return $.filtered(ancestors, selector)
       },
       parent: function (selector) {
-        return DOMUtil.filtered(uniq(this.pluck('parentNode')), selector)
+        return $.filtered(uniq(this.pluck('parentNode')), selector)
       },
       children: function (selector) {
-        return DOMUtil.filtered(this.map(function () {
-          return DOMUtil.children(this)
+        return $.filtered(this.map(function () {
+          return $.children(this)
         }), selector)
       },
       contents: function () {
@@ -167,8 +166,8 @@
         })
       },
       siblings: function (selector) {
-        return DOMUtil.filtered(this.map(function (i, el) {
-          return filter.call(DOMUtil.children(el.parentNode), function (child) {
+        return $.filtered(this.map(function (i, el) {
+          return filter.call($.children(el.parentNode), function (child) {
             return child !== el
           })
         }), selector);
@@ -188,14 +187,14 @@
         return this.each(function () {
           this.style.display == 'none' && (this.style.display = '');
           if (getComputedStyle(this, '').getPropertyValue('display') == 'none')
-            this.style.display = DOMUtil.defaultDisplay(this.nodeName)
+            this.style.display = $.defaultDisplay(this.nodeName)
         })
       },
       replaceWith: function (newContent) {
         return this.before(newContent).remove()
       },
       wrap: function (structure) {
-        var func = DOMUtil.isFunction(structure);
+        var func = nx.isFunction(structure);
         if (this[0] && !func)
           var dom = $(structure).get(0),
             clone = dom.parentNode || this.length > 1;
@@ -218,7 +217,7 @@
         return this;
       },
       wrapInner: function (structure) {
-        var func = DOMUtil.isFunction(structure);
+        var func = nx.isFunction(structure);
         return this.each(function (index) {
           var self = $(this), contents = self.contents(),
             dom = func ? structure.call(this, index) : structure;
@@ -255,14 +254,14 @@
         return 0 in arguments ?
           this.each(function (idx) {
             var originHtml = this.innerHTML;
-            $(this).empty().append(DOMUtil.funcArg(this, html, idx, originHtml))
+            $(this).empty().append($.funcArg(this, html, idx, originHtml))
           }) :
           (0 in this ? this[0].innerHTML : null);
       },
       text: function (text) {
         return 0 in arguments ?
           this.each(function (idx) {
-            var newText = DOMUtil.funcArg(this, text, idx, this.textContent);
+            var newText = $.funcArg(this, text, idx, this.textContent);
             this.textContent = newText == null ? '' : '' + newText
           }) :
           (0 in this ? this[0].textContent : null)
@@ -275,14 +274,14 @@
           ) :
           this.each(function (idx) {
             if (this.nodeType !== 1) return;
-            if (DOMUtil.isObject(name)) for (key in name) DOMUtil.setAttribute(this, key, name[key]);
-            else DOMUtil.setAttribute(this, name, DOMUtil.funcArg(this, value, idx, this.getAttribute(name)));
+            if (nx.isObject(name)) for (key in name) $.setAttribute(this, key, name[key]);
+            else $.setAttribute(this, name, $.funcArg(this, value, idx, this.getAttribute(name)));
           })
       },
       removeAttr: function (name) {
         return this.each(function () {
           this.nodeType === 1 && name.split(' ').forEach(function (attribute) {
-            DOMUtil.setAttribute(this, attribute)
+            $.setAttribute(this, attribute)
           }, this)
         })
       },
@@ -290,7 +289,7 @@
         name = propMap[name] || name;
         return (1 in arguments) ?
           this.each(function (idx) {
-            this[name] = DOMUtil.funcArg(this, value, idx, this[name])
+            this[name] = $.funcArg(this, value, idx, this[name])
           }) :
           (this[0] && this[0][name]);
       },
@@ -301,12 +300,12 @@
           this.attr(attrName, value) :
           this.attr(attrName);
 
-        return data !== null ? DOMUtil.deserializeValue(data) : undefined;
+        return data !== null ? nx.deserializeValue(data) : undefined;
       },
       val: function (value) {
         return 0 in arguments ?
           this.each(function (idx) {
-            this.value = DOMUtil.funcArg(this, value, idx, this.value)
+            this.value = $.funcArg(this, value, idx, this.value)
           }) :
           (this[0] && (this[0].multiple ?
               $(this[0]).find('option').filter(function () {
@@ -318,7 +317,7 @@
       offset: function (coordinates) {
         if (coordinates) return this.each(function (index) {
           var $this = $(this),
-            coords = DOMUtil.funcArg(this, coordinates, index, $this.offset()),
+            coords = $.funcArg(this, coordinates, index, $this.offset()),
             parentOffset = $this.offsetParent().offset(),
             props = {
               top: coords.top - parentOffset.top,
@@ -344,9 +343,9 @@
           computedStyle = getComputedStyle(element, '');
           if (typeof property == 'string')
             return element.style[$.camelCase(property)] || computedStyle.getPropertyValue(property);
-          else if (DOMUtil.isArray(property)) {
+          else if (nx.isArray(property)) {
             var props = {};
-            $.each(property, function (_, prop) {
+            nx.each(property, function (_, prop) {
               props[prop] = (element.style[$.camelCase(prop)] || computedStyle.getPropertyValue(prop))
             });
             return props;
@@ -354,21 +353,21 @@
         }
 
         var css = '';
-        if (DOMUtil.type(property) == 'string') {
+        if (nx.type(property) == 'string') {
           if (!value && value !== 0)
             this.each(function () {
-              this.style.removeProperty(DOMUtil.dasherize(property))
+              this.style.removeProperty(nx.dasherize(property))
             });
           else
-            css = DOMUtil.dasherize(property) + ':' + DOMUtil.maybeAddPx(property, value)
+            css = nx.dasherize(property) + ':' + $.maybeAddPx(property, value)
         } else {
           for (key in property)
             if (!property[key] && property[key] !== 0)
               this.each(function () {
-                this.style.removeProperty(DOMUtil.dasherize(key))
+                this.style.removeProperty(nx.dasherize(key))
               });
             else
-              css += DOMUtil.dasherize(key) + ':' + DOMUtil.maybeAddPx(key, property[key]) + ';';
+              css += nx.dasherize(key) + ':' + $.maybeAddPx(key, property[key]) + ';';
         }
 
         return this.each(function () {
@@ -381,36 +380,36 @@
       hasClass: function (name) {
         if (!name) return false;
         return emptyArray.some.call(this, function (el) {
-          return this.test(DOMUtil.className(el))
-        }, DOMUtil.classRE(name))
+          return this.test($.className(el))
+        }, $.classRE(name))
       },
       addClass: function (name) {
         if (!name) return this;
         return this.each(function (idx) {
           if (!('className' in this)) return;
           classList = [];
-          var cls = DOMUtil.className(this), newName = DOMUtil.funcArg(this, name, idx, cls);
+          var cls = $.className(this), newName = $.funcArg(this, name, idx, cls);
           newName.split(/\s+/g).forEach(function (klass) {
             if (!$(this).hasClass(klass)) classList.push(klass)
           }, this);
-          classList.length && DOMUtil.className(this, cls + (cls ? ' ' : '') + classList.join(' '))
+          classList.length && $.className(this, cls + (cls ? ' ' : '') + classList.join(' '))
         })
       },
       removeClass: function (name) {
         return this.each(function (idx) {
           if (!('className' in this)) return;
-          if (name === undefined) return DOMUtil.className(this, '');
-          classList = DOMUtil.className(this);
-          DOMUtil.funcArg(this, name, idx, classList).split(/\s+/g).forEach(function (klass) {
-            classList = classList.replace(DOMUtil.classRE(klass), ' ')
+          if (name === undefined) return $.className(this, '');
+          classList = $.className(this);
+          $.funcArg(this, name, idx, classList).split(/\s+/g).forEach(function (klass) {
+            classList = classList.replace($.classRE(klass), ' ')
           });
-          DOMUtil.className(this, classList.trim())
+          $.className(this, classList.trim())
         })
       },
       toggleClass: function (name, when) {
         if (!name) return this;
         return this.each(function (idx) {
-          var $this = $(this), names = DOMUtil.funcArg(this, name, idx, DOMUtil.className(this));
+          var $this = $(this), names = $.funcArg(this, name, idx, $.className(this));
           names.split(/\s+/g).forEach(function (klass) {
             (when === undefined ? !$this.hasClass(klass) : when) ?
               $this.addClass(klass) : $this.removeClass(klass)
@@ -485,7 +484,7 @@
     $.fn[operator] = function () {
       // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
       var argType, nodes = $.map(arguments, function (arg) {
-          argType = DOMUtil.type(arg);
+          argType = nx.type(arg);
           if (argType == 'object' || argType == 'array' || arg == null) {
             return arg;
           } else {
@@ -517,7 +516,7 @@
 
           parent.insertBefore(node, target);
           if (parentInDocument) {
-            DOMUtil.traverseNode(node, function (el) {
+            $.traverseNode(node, function (el) {
               if (
                 el.nodeName != null
                 && el.nodeName.toUpperCase() === 'SCRIPT'
