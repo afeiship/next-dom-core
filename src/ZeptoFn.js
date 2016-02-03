@@ -98,7 +98,8 @@
   }
 
   function toScoped(selector) {
-    return selector.indexOf(':scope') > -1 ? selector : ':scope ' + selector;
+    selector = selector.trim();
+    return selector.indexOf(':scope') == 0 ? selector : ':scope ' + selector;
   }
 
 
