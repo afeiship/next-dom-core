@@ -5,8 +5,26 @@
     <title>Title</title>
   <script type="text/javascript" src="../bower_components/next-js-core/dist/nx.core.js"></script>
   <script type="text/javascript" src="../dist/nx.dom.core.js"></script>
+  <style type="text/css">
+    .matched { background: yellow; }
+  </style>
 </head>
 <body>
 
+
+<div id="subelement">
+  <p>Should not be highlighted.</p>
+  <p>Should not be highlighted.</p>
+  <div id="footer">
+    <p>Should be highlighted.</p>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  nx.$("#subelement").find("div p").addClass("matched");
+  //nx.$("#subelement").find(":scope div p").addClass("matched")
+
+</script>
 </body>
 </html>

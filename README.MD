@@ -11,4 +11,4 @@
 + nx.fragment
 
 ##issue:
-+ https://github.com/madrobby/zepto/issues/730
++ https://github.com/madrobby/zepto/issues/730(Fixed in next-dom-cre)

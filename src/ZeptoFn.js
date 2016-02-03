@@ -50,10 +50,8 @@
   }
 
   function classRE(name) {
-    if (!name in classCache) {
-      classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)');
-    }
-    return classCache[name];
+    return name in classCache ?
+      classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'))
   }
 
   function maybeAddPx(name, value) {
@@ -97,6 +95,10 @@
     for (var i = 0, len = node.childNodes.length; i < len; i++) {
       traverseNode(node.childNodes[i], fun);
     }
+  }
+
+  function toScoped(selector) {
+    return selector.indexOf(':scope') > -1 ? selector : ':scope ' + selector;
   }
 
 
@@ -203,9 +205,9 @@
               return nx.contains(parent, node)
             })
           });
-        else if (this.length == 1) result = $(nx.qsa(this[0], selector));
+        else if (this.length == 1) result = $(nx.qsa(this[0], toScoped(selector)));
         else result = this.map(function () {
-            return nx.qsa(this, selector)
+            return nx.qsa(this, toScoped(selector));
           });
         return result;
       },

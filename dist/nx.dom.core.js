@@ -260,10 +260,8 @@
   }
 
   function classRE(name) {
-    if (!name in classCache) {
-      classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)');
-    }
-    return classCache[name];
+    return name in classCache ?
+      classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'))
   }
 
   function maybeAddPx(name, value) {
@@ -309,6 +307,10 @@
     }
   }
 
+  function toScoped(selector) {
+    return selector.indexOf(':scope') > -1 ? selector : ':scope ' + selector;
+  }
+
 
   var ZeptoFn = nx.declare('nx.zepto.Fn', {
     statics: {
@@ -344,7 +346,7 @@
           if (this.parentNode != null) {
             this.parentNode.removeChild(this);
           }
-        })
+        });
       },
       each: function (callback) {
         emptyArray.every.call(this, function (el, idx) {
@@ -364,7 +366,7 @@
       },
       add: function (selector, context) {
         return $(
-          nx.uniq(this.concat($(selector, context)))
+          nx.unique(this.concat($(selector, context)))
         );
       },
       is: function (selector) {
@@ -410,12 +412,12 @@
           result = $(selector).filter(function () {
             var node = this;
             return emptyArray.some.call($this, function (parent) {
-              return $.contains(parent, node)
+              return nx.contains(parent, node)
             })
           });
-        else if (this.length == 1) result = $(nx.qsa(this[0], selector));
+        else if (this.length == 1) result = $(nx.qsa(this[0], toScoped(selector)));
         else result = this.map(function () {
-            return nx.qsa(this, selector)
+            return nx.qsa(this, toScoped(selector));
           });
         return result;
       },
@@ -438,7 +440,7 @@
         return filtered(ancestors, selector)
       },
       parent: function (selector) {
-        return filtered(nx.uniq(this.pluck('parentNode')), selector)
+        return filtered(nx.unique(this.pluck('parentNode')), selector)
       },
       children: function (selector) {
         return filtered(this.map(function () {
@@ -530,16 +532,16 @@
         })
       },
       prev: function (selector) {
-        return $(this.pluck('previousElementSibling')).filter(selector || '*')
+        return $(this.pluck('previousElementSibling')).filter(selector || '*');
       },
       next: function (selector) {
-        return $(this.pluck('nextElementSibling')).filter(selector || '*')
+        return $(this.pluck('nextElementSibling')).filter(selector || '*');
       },
       html: function (html) {
         return 0 in arguments ?
           this.each(function (idx) {
             var originHtml = this.innerHTML;
-            $(this).empty().append(funcArg(this, html, idx, originHtml))
+            $(this).empty().append(funcArg(this, html, idx, originHtml));
           }) :
           (0 in this ? this[0].innerHTML : null);
       },
@@ -567,7 +569,7 @@
         return this.each(function () {
           this.nodeType === 1 && name.split(' ').forEach(function (attribute) {
             setAttribute(this, attribute)
-          }, this)
+          }, this);
         })
       },
       prop: function (name, value) {
