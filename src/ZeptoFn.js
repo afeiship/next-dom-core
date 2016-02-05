@@ -8,7 +8,6 @@
     slice = emptyArray.slice,
     filter = emptyArray.filter,
     map = emptyArray.map;
-  var capitalRE = /([A-Z])/g;
   var rootNodeRE = /^(?:body|html)$/i;
   var propMap = {
     'tabindex': 'tabIndex',
@@ -370,15 +369,6 @@
             this[name] = funcArg(this, value, idx, this[name])
           }) :
           (this[0] && this[0][name]);
-      },
-      data: function (name, value) {
-        var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase();
-
-        var data = (1 in arguments) ?
-          this.attr(attrName, value) :
-          this.attr(attrName);
-
-        return data !== null ? nx.deserializeValue(data) : undefined;
       },
       val: function (value) {
         return 0 in arguments ?
