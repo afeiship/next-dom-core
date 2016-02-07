@@ -180,7 +180,7 @@
       has: function (selector) {
         return this.filter(function () {
           return nx.isObject(selector) ?
-            $.contains(this, selector) :
+            nx.contains(this, selector) :
             $(this).find(selector).size();
         })
       },
