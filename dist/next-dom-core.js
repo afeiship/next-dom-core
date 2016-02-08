@@ -218,7 +218,6 @@
     slice = emptyArray.slice,
     filter = emptyArray.filter,
     map = emptyArray.map;
-  var capitalRE = /([A-Z])/g;
   var rootNodeRE = /^(?:body|html)$/i;
   var propMap = {
     'tabindex': 'tabIndex',
@@ -308,7 +307,8 @@
   }
 
   function toScoped(selector) {
-    return selector.indexOf(':scope') > -1 ? selector : ':scope ' + selector;
+    selector = selector.trim();
+    return selector.indexOf(':scope') == 0 ? selector : ':scope ' + selector;
   }
 
 
@@ -390,7 +390,7 @@
       has: function (selector) {
         return this.filter(function () {
           return nx.isObject(selector) ?
-            $.contains(this, selector) :
+            nx.contains(this, selector) :
             $(this).find(selector).size();
         })
       },
@@ -579,15 +579,6 @@
             this[name] = funcArg(this, value, idx, this[name])
           }) :
           (this[0] && this[0][name]);
-      },
-      data: function (name, value) {
-        var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase();
-
-        var data = (1 in arguments) ?
-          this.attr(attrName, value) :
-          this.attr(attrName);
-
-        return data !== null ? nx.deserializeValue(data) : undefined;
       },
       val: function (value) {
         return 0 in arguments ?

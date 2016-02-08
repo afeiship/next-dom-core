@@ -18,8 +18,8 @@
       conf.src + '/Core.js',
       conf.src + '/ZeptoFn.js'
     ],
-    dist: 'nx.dom.core.js',
-    mini: 'nx.dom.core.min.js'
+    dist: 'next-dom-core.js',
+    mini: 'next-dom-core.min.js'
   };
 
   gulp.task('clean', function () {
