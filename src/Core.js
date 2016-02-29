@@ -67,5 +67,4 @@
 
   nx.$.fn = {};
 
-
 }(nx, nx.GLOBAL));

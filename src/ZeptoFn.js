@@ -610,10 +610,6 @@
     }
   });
 
-  nx.mix(
-    $.fn,
-    ZeptoFn.__statics__
-  );
-
+  nx.mix($.fn, ZeptoFn.__statics__);
 
 }(nx, nx.GLOBAL));
