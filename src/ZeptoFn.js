@@ -1,6 +1,7 @@
 (function (nx, global) {
 
-  var document = global.document, undefined;
+  var undefined;
+  var document = global.document;
   var $ = nx.$;
   var key;
   var classList;

@@ -1,6 +1,7 @@
 (function (nx, global) {
 
-  var document = global.document, undefined;
+  var undefined;
+  var document = global.document;
   var readyRE = /complete|loaded|interactive/;
   var singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/;
   var tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig;
@@ -18,7 +19,6 @@
       '*': document.createElement('div')
     };
   var methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'];
-  var emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter;
   var supportContains = !!document.documentElement.contains;
 
 
@@ -30,7 +30,6 @@
         callback(nx);
       }, false);
     }
-    return this;
   };
 
 
@@ -76,7 +75,7 @@
 
       container = containers[name];
       container.innerHTML = '' + html;
-      dom = nx.each(slice.call(container.childNodes), function () {
+      dom = nx.each(nx.toArray(container.childNodes), function () {
         container.removeChild(this);
       });
     }
@@ -129,7 +128,7 @@
         while (node && (node = node.parentNode))
           if (node === parent) return true;
         return false;
-      }
+      };
     }
   }());
 
@@ -210,7 +209,8 @@
 
 (function (nx, global) {
 
-  var document = global.document, undefined;
+  var undefined;
+  var document = global.document;
   var $ = nx.$;
   var key;
   var classList;
