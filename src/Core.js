@@ -1,11 +1,11 @@
-(function (nx, global) {
+(function(nx, global) {
 
-  var document = global.document, undefined;
+  var document = global.document,
+    undefined;
   var fragmentRE = /^\s*<(\w+|!)[^>]*>/;
-
   var Zepto = nx.declare('nx.zepto.Core', {
     statics: {
-      start: function (selector, context) {
+      start: function(selector, context) {
         var dom;
         if (!selector) {
           return Zepto.Z();
@@ -48,20 +48,20 @@
         // create a new Zepto collection from the nodes found
         return Zepto.Z(dom, selector);
       },
-      Z: function (dom, selector) {
+      Z: function(dom, selector) {
         dom = dom || [];
         dom.__proto__ = nx.$.fn;
         dom.selector = selector || '';
         return dom;
       },
-      isZ: function (obj) {
+      isZ: function(obj) {
         return obj instanceof Zepto.Z;
       }
     }
   });
 
 
-  nx.$ = function (selector, context) {
+  nx.$ = function(selector, context) {
     return Zepto.start(selector, context);
   };
 
